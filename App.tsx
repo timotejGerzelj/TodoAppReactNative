@@ -5,14 +5,17 @@
  * @format
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import type {PropsWithChildren} from 'react';
 import {
+  Button,
+  FlatList,
   SafeAreaView,
   ScrollView,
   StatusBar,
   StyleSheet,
   Text,
+  TextInput,
   useColorScheme,
   View,
 } from 'react-native';
@@ -24,6 +27,7 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import CustomHeader from './components/header/Header';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -41,6 +45,7 @@ function Section({children, title}: SectionProps): React.JSX.Element {
           },
         ]}>
         {title}
+        Hello title
       </Text>
       <Text
         style={[
@@ -57,6 +62,8 @@ function Section({children, title}: SectionProps): React.JSX.Element {
 
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
+  const [task, updateTask] = useState(["walk dog", "change diapers", ])
+  const [text, setText] = useState('');
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
@@ -64,34 +71,28 @@ function App(): React.JSX.Element {
 
   return (
     <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
+      <CustomHeader title="My App Header"/>
+      <FlatList data={task} renderItem={({item, index}) => 
+    <View><Text >{item}
+    </Text>
+    <Button
+              title="Delete"
+              onPress={() => {
+                updateTask(prevTasks => prevTasks.filter((_, indexToRemove) => index !== indexToRemove));
+              }}
+    />
+    </View>
+  } />
+    <TextInput 
+            onChangeText={newText => setText(newText)}
+            defaultValue={text}
+    ></TextInput>
+    <Button onPress={() => {
+      updateTask([
+        ...task, text
+      ])
+  }}
+  title="Add here"/>
     </SafeAreaView>
   );
 }
